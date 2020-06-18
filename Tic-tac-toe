@@ -1,0 +1,171 @@
+import random
+def displayboard(board):
+    print('*'*20)
+    print(f'*     |     |      *\n*  {board[7]}  |  {board[8]}  |  {board[9]}   *\n*     |     |      *')
+    print('~'*20)
+    print(f'*     |     |      *\n*  {board[4]}  |  {board[5]}  |  {board[6]}   *\n*     |     |      *')
+    print('~'*20)
+    print(f'*     |     |      *\n*  {board[1]}  |  {board[2]}  |  {board[3]}   *\n*     |     |      *')
+    
+    print('*'*20)
+
+   
+#______________________________
+def inputletter():
+    letter=' '
+    while not (letter=='x' or letter=='o'):
+        print('CHOOSE YOUR CHARACTER (X OR O)')
+        letter=input().lower()
+    if letter=='x':
+        return ['x','o']
+    else:
+        return ['o','x']
+  
+#__________________________
+def getinstructions ():
+    print()
+    st='INSTRUCTIONS'
+    st1=st.center(50,'~')
+    print(st1)
+    print()
+    print(f'     |     |   \n  {7}  |  {8}  |  {9}\n     |     |')
+    print('~'*20)
+    print(f'     |     |   \n  {4}  |  {5}  |  {6}\n     |     |')
+    print('~'*20)
+    print(f'     |     |   \n  {1}  |  {2}  |  {3}\n     |     |')
+    print('~'*20)
+    print('YOU WILL WIN THE GAME IF AND ONLY IF \n  ALL VETICALS SHOULD BE YOUR CHARACTER \n   (OR) \n  ALL HOTIZONTALS SHOULD BE YOUR CHARACTER \n   (OR) \n  ALL DIAGONALS SHOULD BE YOUR CHARACTER')
+    print()
+    print('START YOUR CHALLENGE')
+    print()
+def makemove(board,letter,move):
+    board[move]=letter
+#__________________________
+    
+def whogoesfirst():
+    a=random.randint(0,1)
+    if a==0: return 'player'
+    else: return 'computer'
+
+#____________________
+def isfree(board,i):
+    if board [i] !='x' and board[i]!='o':
+        return True
+    else: return False
+#_______________________
+def getplayermove(board):
+    move=' '
+    while True:
+        move=input ('ENTER THE NUMBER(1-9)')
+        if move in '1 2 3 4 5 6 7 8 9':
+            if isfree(board,int(move)):
+                break
+
+    return int(move)
+  
+#_______________________
+def iswinner(bd,lr):
+    return (bd[1]==lr and bd[2]==lr and bd[3]==lr) or (bd[4]==lr and bd[5]==lr and bd[6]==lr) or (bd[7]==lr and bd[8]==lr and bd[9]==lr) or (bd[1]==lr and bd[4]==lr and bd[7]==lr) or (bd[1]==lr and bd[5]==lr and bd[9]==lr) or (bd[2]==lr and bd[5]==lr and bd[8]==lr) or (bd[7]==lr and bd[5]==lr and bd[3]==lr) or (bd[9]==lr and bd[6]==lr and bd[3]==lr) 
+#____________________________
+def getcpy(board):
+    l=[]
+    for i in board:
+        l.append(i)
+    return l
+#____________________________
+def isboardfull(board):
+    for i in range(1,10):
+        if isfree(board,i):
+            return False
+    return True
+#__________________________________
+def randomlychoose(board,liste):
+    possible=[]
+    for i in liste:
+        if isfree(board,i):
+            possible.append(i)
+    if len(possible)!=0:
+        return random.choice(possible)
+    else:
+        None
+
+#__________________________
+def playagain():
+    a=input('CHILL PLAY AGAIN!(YES or NO)')
+    if a.lower()=='yes': return True
+#___________________________
+def getcomputermove(board, computerletter):
+    if computerletter=='x':
+        playerletter='o'
+    else:
+        playerletter='x'
+    for i in range(1,10):
+        cpy=getcpy(board)
+        if isfree(cpy,i):
+            makemove(cpy, computerletter,i)
+            if iswinner(cpy,computerletter):
+                return i
+                
+    for i in range(1,10):
+        cpy=getcpy(board)
+        if isfree(cpy,i):
+            makemove (cpy, playerletter,i)
+            if iswinner(cpy, playerletter):
+                return i
+    move=randomlychoose(board,[1,3,7,9])
+    if move!=None:
+        return move
+    if isfree(board,5):
+        return 5
+
+             
+    return randomlychoose(board,[2,4,6,8])
+#_____________________________________
+sty='WELCOME TO TIC TAC TOE'
+su=sty.center(50,'•')
+print(su)    
+getinstructions ()
+while True:
+
+    theboard=[' ']*10
+    playerletter, computerletter=inputletter()
+    turn=whogoesfirst()
+    print(f'THE {turn} WILL PLAY FIRST')
+    gameisplaying=True
+    while gameisplaying:
+        if turn=='player':
+            displayboard(theboard)
+            move=getplayermove(theboard)
+            makemove(theboard,playerletter,move)
+            if iswinner(theboard,playerletter):
+                displayboard (theboard)
+                print('YOU BEATEN THE COMPUTER!\n    CONGRATS YOU ARE THE WINNER')
+                gameisplaying=False
+            else:
+                if isboardfull(theboard):
+                    displayboard (theboard)
+                    print('GAME IS TIE')
+                    gameisplaying=False
+                else:
+                    turn='computer'                                
+        else:
+            move=getcomputermove(theboard,computerletter)
+            displayboard (theboard)
+            makemove(theboard,computerletter,move)
+            
+            if iswinner(theboard,computerletter):
+                displayboard (theboard)
+                print('COMPUTER WAS BEATEN YOU! \n   YOU LOSE')
+                gameisplaying=False
+            else:
+                if isboardfull(theboard):
+                    displayboard (theboard)
+                    print('GAME IS TIE')
+                    gameisplaying=False
+                else:
+                    turn='player'
+    if not playagain():
+        break
+           
+    
+
